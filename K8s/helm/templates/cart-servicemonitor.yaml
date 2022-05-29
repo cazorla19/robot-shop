@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: cart
+  labels:
+    service: cart
+    release: mkdev-wob-101
+spec:
+  namespaceSelector:
+    matchNames:
+    - robot-shop
+  selector:
+    matchLabels:
+      service: cart
+  endpoints:
+  - port: http
+
