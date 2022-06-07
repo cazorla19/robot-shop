@@ -10,7 +10,7 @@ COPY package.json /opt/server/
 
 RUN npm install
 
-COPY server.js /opt/server/
+COPY *.js /opt/server/
 
-CMD ["node", "server.js"]
+CMD ["/bin/sh", "-c", "node --require './tracing.js' server.js"]
 
