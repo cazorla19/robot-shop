@@ -2,9 +2,26 @@
 
 namespace Instana\RobotShop\Ratings\EventListener;
 
-use Instana\InstanaRuntimeException;
-use Instana\Tracer;
 use Psr\Log\LoggerInterface;
+
+use OpenTelemetry\SDK\Trace\SpanExporter\ConsoleSpanExporter;
+use OpenTelemetry\SDK\Trace\SpanProcessor\SimpleSpanProcessor;
+use OpenTelemetry\SDK\Trace\TracerProvider;
+
+echo 'Starting ConsoleSpanExporter' . PHP_EOL;
+
+$tracerProvider =  new TracerProvider(
+    new SimpleSpanProcessor(
+        new ConsoleSpanExporter()
+    )
+);
+
+$tracer = $tracerProvider->getTracer();
+
+//start a root span
+$rootSpan = $tracer->spanBuilder('root')->startSpan();
+//future spans will be parented to the currently active span
+$rootScope = $rootSpan->activate();
 
 class InstanaDataCenterListener
 {
@@ -29,14 +46,23 @@ class InstanaDataCenterListener
     public function __invoke()
     {
         try {
-            $entry = Tracer::getEntrySpan();
-
-            $dataCenter = self::$dataCenters[array_rand(self::$dataCenters)];
-            $entry->annotate('datacenter', $dataCenter);
-
-            $this->logger->info(sprintf('Annotated DataCenter %s', $dataCenter));
-        } catch (InstanaRuntimeException $exception) {
+            $span1 = $tracer->spanBuilder('invoke')->startSpan();
+            $span1Scope = $span1->activate();
+            try {
+                $span2 = $tracer->spanBuilder('annotate')->startSpan();
+                $dataCenter = self::$dataCenters[array_rand(self::$dataCenters)];
+                $entry->annotate('datacenter', $dataCenter);
+                $span2->end();
+            } finally {
+                $span1Scope->detach();
+                $span1->end();
+            }
+        } catch (Exception $exception) {
             $this->logger->error('Unable to annotate entry span: %s', $exception->getMessage());
+        } finally {
+            //ensure span ends and scope is detached
+            $rootScope->detach();
+            $rootSpan->end();
         }
     }
 }
