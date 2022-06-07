@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: payment
+  labels:
+    service: payment
+    release: mkdev-wob-101
+spec:
+  namespaceSelector:
+    matchNames:
+    - robot-shop
+  selector:
+    matchLabels:
+      service: payment
+  endpoints:
+  - port: http
+
