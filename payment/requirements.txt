@@ -3,5 +3,5 @@ Flask
 requests
 pika
 prometheus_client
-opentracing
-instana
+opentelemetry-distro
+opentelemetry-instrumentation-flask
