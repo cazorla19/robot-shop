@@ -13,7 +13,8 @@ import (
 	"github.com/streadway/amqp"
 
 	"go.opentelemetry.io/otel"
-	stdout "go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/propagation"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
@@ -39,8 +40,9 @@ var (
 )
 
 // InitTracer creates and registers globally a new TracerProvider.
-func InitTracer() (*sdktrace.TracerProvider, error) {
-	exporter, err := stdout.New(stdout.WithPrettyPrint())
+func InitTracer(ctx context.Context) (*sdktrace.TracerProvider, error) {
+	client := otlptracehttp.NewClient()
+	exporter, err := otlptrace.New(ctx, client)
 	if err != nil {
 		return nil, err
 	}
@@ -121,14 +123,15 @@ func getOrderId(order []byte) string {
 }
 
 func main() {
+	ctx := context.Background()
 	rand.Seed(time.Now().Unix())
 
-	tp, err := InitTracer()
+	tp, err := InitTracer(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer func() {
-		if err := tp.Shutdown(context.Background()); err != nil {
+		if err := tp.Shutdown(ctx); err != nil {
 			log.Printf("Error shutting down tracer provider: %v", err)
 		}
 	}()

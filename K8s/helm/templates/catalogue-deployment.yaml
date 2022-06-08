@@ -22,10 +22,8 @@ spec:
         image: {{ .Values.image.repo }}/rs-catalogue:{{ .Values.image.version }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
-          - name: INSTANA_AGENT_HOST
-            valueFrom:
-              fieldRef:
-                fieldPath: status.hostIP
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://mkdev-wob-101-tempo.observability.svc.cluster.local:4317
         ports:
         - containerPort: 8080
         resources:
