@@ -28,6 +28,8 @@ spec:
         env:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://mkdev-wob-101-tempo.observability.svc.cluster.local:4317
+          - name: OTEL_EXPORTER_OTLP_INSECURE
+            value: true
           {{- if .Values.payment.gateway }}
           - name: PAYMENT_GATEWAY
             value: {{ .Values.payment.gateway }}

@@ -30,7 +30,7 @@ app.logger.setLevel(logging.INFO)
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer_provider().get_tracer(__name__)
-otlp_exporter = OTLPSpanExporter(insecure=True)
+otlp_exporter = OTLPSpanExporter()
 
 trace.get_tracer_provider().add_span_processor(
     BatchSpanProcessor(otlp_exporter)
