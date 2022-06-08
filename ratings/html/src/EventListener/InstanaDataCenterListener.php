@@ -4,15 +4,22 @@ namespace Instana\RobotShop\Ratings\EventListener;
 
 use Psr\Log\LoggerInterface;
 
-use OpenTelemetry\SDK\Trace\SpanExporter\ConsoleSpanExporter;
+use OpenTelemetry\Contrib\OtlpHttp\Exporter as OTLPExporter;
+use OpenTelemetry\SDK\Common\Attribute\Attributes;
 use OpenTelemetry\SDK\Trace\SpanProcessor\SimpleSpanProcessor;
 use OpenTelemetry\SDK\Trace\TracerProvider;
 
 echo 'Starting ConsoleSpanExporter' . PHP_EOL;
 
+$exporter = new OTLPExporter(
+    new Client(),
+    new HttpFactory(),
+    new HttpFactory()
+);
+
 $tracerProvider =  new TracerProvider(
     new SimpleSpanProcessor(
-        new ConsoleSpanExporter()
+        $exporter
     )
 );
 
