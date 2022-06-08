@@ -19,21 +19,21 @@ from prometheus_client import Counter, Histogram
 # OpenTelemetry
 from opentelemetry import trace
 from opentelemetry.instrumentation.wsgi import collect_request_attributes
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.propagate import extract
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import (
-    BatchSpanProcessor,
-    ConsoleSpanExporter,
-)
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
 
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer_provider().get_tracer(__name__)
+otlp_exporter = OTLPSpanExporter(insecure=True)
 
 trace.get_tracer_provider().add_span_processor(
-    BatchSpanProcessor(ConsoleSpanExporter())
+    BatchSpanProcessor(otlp_exporter)
 )
 
 CART = os.getenv('CART_HOST', 'cart')
