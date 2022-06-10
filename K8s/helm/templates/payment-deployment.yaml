@@ -22,14 +22,14 @@ spec:
       {{ end }}
       containers:
       - name: payment
-        image: {{ .Values.image.repo }}/rs-payment:{{ .Values.image.version }}
+        image: {{ .Values.image.trace_repo }}/rs-cart:{{ .Values.image.version }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         # agent networking access
         env:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://mkdev-wob-101-tempo.observability.svc.cluster.local:4317
           - name: OTEL_EXPORTER_OTLP_INSECURE
-            value: true
+            value: "true"
           {{- if .Values.payment.gateway }}
           - name: PAYMENT_GATEWAY
             value: {{ .Values.payment.gateway }}

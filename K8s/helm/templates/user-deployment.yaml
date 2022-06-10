@@ -19,13 +19,13 @@ spec:
       {{ end }}
       containers:
       - name: user
-        image: {{ .Values.image.repo }}/rs-user:{{ .Values.image.version }}
+        image: {{ .Values.image.trace_repo }}/rs-cart:{{ .Values.image.version }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://mkdev-wob-101-tempo.observability.svc.cluster.local:4317
           - name: OTEL_EXPORTER_OTLP_INSECURE
-            value: true
+            value: "true"
         ports:
         - containerPort: 8080
         resources:

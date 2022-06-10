@@ -1,7 +1,8 @@
 # Registry and rpository for Docker images
 # Default is docker/robotshop/image:latest
 image:
-  repo: cazorla19
+  repo: robotshop
+  trace_repo: cazorla19
   version: latest
   pullPolicy: IfNotPresent
 
