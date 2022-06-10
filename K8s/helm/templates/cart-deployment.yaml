@@ -24,7 +24,7 @@ spec:
         # agent networking access
         env:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://mkdev-wob-101-opentelemetry-collector.observability.svc.cluster.local:4317
+            value: http://mkdev-wob-101-opentelemetry-collector.observability.svc.cluster.local:4318
           - name: OTEL_EXPORTER_OTLP_INSECURE
             value: "true"
         ports:
